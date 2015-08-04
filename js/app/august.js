@@ -8,8 +8,8 @@ $(function() {
   /* var */
 
   var ctx, 
-      historyPointer,
-      undoRedoHistory = [];
+      historyPointer = 0,
+      history = [];
 
   var $window = $(window),
       $body = $('body');
@@ -38,12 +38,25 @@ $(function() {
       drawFromLocalStorage();
     }
   };
+  
+  var resetCanvas = function() {
+    ctx.clearRect(0, 0, $window.width(), $window.height());
+    history = [];
+    saveToLocalStorage();
+  };
 
   var initpixel = function(size) {
     pixel.size = size;
   };
 
-  var drawPixel = function(xPos, yPos, color, size) {
+  var drawPixel = function(xPos, yPos, color, size, addToHistory) {
+    
+    // get color at this spot and compare to color
+    var orig = ctx.getImageData(xPos, yPos, 1, 1).data;
+    if ( orig[3] === 255) {
+      return;
+    }
+    
     ctx.beginPath();
     xPos = ( Math.ceil(xPos/size) * size ) - size;
     yPos = ( Math.ceil(yPos/size) * size ) - size;
@@ -51,23 +64,48 @@ $(function() {
     ctx.fillStyle = color;
     ctx.lineHeight = 0;
 
-    if ( color == 'rgba(0, 0, 0, 0)' ) {
-      ctx.clearRect(xPos,yPos,size,size);
+    
+    ctx.fillRect(xPos,yPos,size,size);
+    
+    if ( addToHistory ) {
+      history.push({
+        xPos: xPos,
+        yPos: yPos,
+        color: color,
+        size: size
+      });
     }
-    else {
-      ctx.fillRect(xPos,yPos,size,size);
-    }
-
+    
   };
 
   var drawOnMove = function(e) {
-    drawPixel(e.pageX, e.pageY, pixel.color, pixel.size);
+    drawPixel(e.pageX, e.pageY, pixel.color, pixel.size, true);
   };
 
   var drawOnTouch = function(e) {
     for ( var i = 0; i < e.touches.length; i++ ) {
       drawOnMove(e.touches[i]);
     }
+  };
+  
+  var animateDrawing = function() {
+    historyPointer = 0;
+    ctx.clearRect(0, 0, $window.width(), $window.height());
+    
+    var drawSlowly = function(){
+      if ( !history[historyPointer] ) {
+        return;
+      }
+      
+      drawPixel(history[historyPointer].xPos, history[historyPointer].yPos, history[historyPointer].color, history[historyPointer].size, false);
+      historyPointer++;
+      
+      if ( historyPointer == history.length) {
+        clearInterval(interval);
+      }
+    };
+    
+    var interval = setInterval(drawSlowly, 60); 
   };
 
 
@@ -81,7 +119,7 @@ $(function() {
       return;
     }
 
-    drawPixel(e.pageX, e.pageY, pixel.color, pixel.size);
+    drawPixel(e.pageX, e.pageY, pixel.color, pixel.size, true);
     
     $canvas.on('mousemove', drawOnMove);
     $canvas[0].addEventListener('touchmove', drawOnTouch, false);
@@ -117,18 +155,38 @@ $(function() {
         windowCanvas.width = newWidth;
         windowCanvas.height = newHeight;
 
-        // save image
         saveToLocalStorage();
 
         $canvas
           .attr('width',newWidth)
           .attr('height',newHeight);
-        console.log($canvas);
-        // draw image
+
         drawFromLocalStorage();
       }
 
     }
+  }); 
+  
+  
+  
+  /* key events */
+  
+  $body.keypress(function(e){
+    
+    switch (e.which) {
+      case 114:
+        // r
+        resetCanvas();
+        break;
+      case 97:
+        // a
+        animateDrawing();
+        break;
+      default:
+        console.log(e.which);
+        break;
+    }
+    
   });
   
   
