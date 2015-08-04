@@ -49,8 +49,17 @@ $(function() {
     pixel.size = size;
   };
 
-  var drawPixel = function(xPos, yPos, color, size, addToHistory) {
+  var drawPixel = function(xPos, yPos, color, size, addToHistory) {    
     
+    if ( addToHistory ) {
+      history.push({
+        xPos: xPos,
+        yPos: yPos,
+        color: color,
+        size: size
+      });
+    }
+
     // get color at this spot and compare to color
     var orig = ctx.getImageData(xPos, yPos, 1, 1).data;
     if ( orig[3] === 255) {
@@ -63,19 +72,8 @@ $(function() {
     ctx.moveTo (xPos, yPos);
     ctx.fillStyle = color;
     ctx.lineHeight = 0;
-
     
     ctx.fillRect(xPos,yPos,size,size);
-    
-    if ( addToHistory ) {
-      history.push({
-        xPos: xPos,
-        yPos: yPos,
-        color: color,
-        size: size
-      });
-    }
-    
   };
 
   var drawOnMove = function(e) {
@@ -169,6 +167,23 @@ $(function() {
   
   
   
+  /* import/export */
+  
+  var saveCanvas = function() {
+    var png = $canvas[0].toDataURL('image/png');
+    window.open(png, '_blank');
+  };
+  
+  var exportHistory = function() {
+    console.log('export json');
+  };
+  
+  var importHistory = function() {
+    console.log('import json');
+  };
+  
+  
+  
   /* key events */
   
   $body.keypress(function(e){
@@ -181,6 +196,18 @@ $(function() {
       case 97:
         // a
         animateDrawing();
+        break;
+      case 115:
+        // s
+        saveCanvas();
+        break;
+      case 101:
+        // e
+        exportHistory();
+        break;
+      case 105:
+        // i
+        importHistory();
         break;
       default:
         console.log(e.which);
@@ -216,15 +243,22 @@ $(function() {
   
   var saveToLocalStorage = function() {
     if ( hasLocalStorage() ) {
-      savedCanvas = $canvas[0].toDataURL('image/png');
-      localStorage.august = savedCanvas;
+      localCanvas = $canvas[0].toDataURL('image/png');
+      localStorage.august = localCanvas;
+      localStorage.augustHistory = JSON.stringify(history);
     }
   };
   
   var drawFromLocalStorage = function() {
-    var savedCanvas = localStorage.august;
-    if ( savedCanvas ) {
-      drawToCanvas(savedCanvas, 0, 0, true);
+    var localCanvas = localStorage.august;
+    var localHistory = localStorage.augustHistory;
+    
+    if ( localHistory ) {
+      history = JSON.parse(localHistory);
+    }
+    
+    if ( localCanvas ) {
+      drawToCanvas(localCanvas, 0, 0, true);
     }
   };
 
