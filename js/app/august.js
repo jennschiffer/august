@@ -12,7 +12,11 @@ $(function() {
       history = [];
 
   var $window = $(window),
-      $body = $('body');
+      $body = $('body'),
+      $link = $('.link'),
+      $modals = $('.modal'),
+      $modalImport = $('.import'),
+      $modalAbout = $('.about');
 
   var windowCanvas = {
     height: $window.height(),
@@ -171,7 +175,10 @@ $(function() {
     }
   }); 
   
-  
+  $link.click(function() {
+    $modals.addClass('hidden');
+    $modalAbout.removeClass('hidden');
+  });
   
   /* colors */
   
@@ -190,11 +197,12 @@ $(function() {
   };
   
   var exportHistory = function() {
-    console.log(JSON.stringify(history));
+    window.open('data:text/json,' + encodeURIComponent(JSON.stringify(history)), '_blank');
   };
   
   var importHistory = function() {
-    console.log('import json');
+    $modals.addClass('hidden');
+    $modalImport.removeClass('hidden');
   };
   
   
@@ -233,7 +241,7 @@ $(function() {
         importHistory();
         break;
       default:
-        console.log(e.which);
+        $modals.addClass('hidden');
         break;
     }
     

@@ -6,9 +6,68 @@
   <style rel="stylesheet">
     body { margin: 0; padding: 0; }
     canvas { display: block; }
+    a:hover { cursor: help; }
+    .hidden { display: none; }
+    h1 { font-size: 2em; line-height: 0; }
+    .modal { position: absolute; top: 25px; left: 25px; background: white; padding: 20px; font-size: .8em; border: 5px solid blue; box-shadow: 5px 5px 0 #000; }
+    .link { position: absolute; top: 10px; left: 10px; opacity: .5; font-weight: bold; font-size: 1.5em; }
+    table { text-align: left; }
+    td, th { padding: 0 15px 0 0; }
   </style>
 </head>
 <body>
+  <a class="link">$</a>
+  
+  <div class="modal about hidden">
+    <h1>august</h1>
+    <p>a project that does whatever i want it to do this month. <br />built <a href="http://github.com/jennschiffer/august">openly</a> by <a href="http://jennmoney.biz">jennmoneydollars</a></p>
+    
+    <table>
+      <tr>
+        <th>pressing<br /> this key</th>
+        <th>does<br /> this</th>
+      </tr>
+      <tr>
+        <td>esc</td>
+        <td>hide windows</td>
+      </tr>
+      <tr>
+        <td>e</td>
+        <td>eraser</td>
+      </tr>
+      <tr>
+        <td>p</td>
+        <td>pen</td>
+      </tr>
+      <tr>
+        <td>i</td>
+        <td>import json</td>
+      </tr>
+      <tr>
+        <td>j</td>
+        <td>export json</td>
+      </tr>      
+      <tr>
+        <td>s</td>
+        <td>save png</td>
+      </tr>
+      <tr>
+        <td>a</td>
+        <td>animate</td>
+      </tr>      
+      <tr>
+        <td>d</td>
+        <td>delete project</td>
+      </tr>
+    </table>
+  </div>
+  
+  <div class="modal import hidden">
+    <strong>import json history</strong>
+    <p>
+      <input type="file" name="json" />
+    </p>
+  </div>
   <script src="js/lib/jquery.js"></script>
   <script src="js/app/august.js"></script>
 </body>
