@@ -39,7 +39,7 @@ $(function() {
     }
   };
   
-  var resetCanvas = function() {
+  var deleteCanvas = function() {
     ctx.clearRect(0, 0, $window.width(), $window.height());
     history = [];
     saveToLocalStorage();
@@ -50,6 +50,13 @@ $(function() {
   };
 
   var drawPixel = function(xPos, yPos, color, size, addToHistory) {    
+
+    // get color at this spot and compare to color
+    var orig = ctx.getImageData(xPos, yPos, 1, 1).data;
+
+    if ( getRGBColor(orig) == color || !color && orig[3] === 0) {
+      return;
+    }
     
     if ( addToHistory ) {
       history.push({
@@ -59,12 +66,6 @@ $(function() {
         size: size
       });
     }
-
-    // get color at this spot and compare to color
-    var orig = ctx.getImageData(xPos, yPos, 1, 1).data;
-    if ( orig[3] === 255) {
-      return;
-    }
     
     ctx.beginPath();
     xPos = ( Math.ceil(xPos/size) * size ) - size;
@@ -73,7 +74,12 @@ $(function() {
     ctx.fillStyle = color;
     ctx.lineHeight = 0;
     
-    ctx.fillRect(xPos,yPos,size,size);
+    if ( !color ) {
+      ctx.clearRect(xPos, yPos, size, size);
+    }
+    else {
+      ctx.fillRect(xPos, yPos, size, size);
+    }
   };
 
   var drawOnMove = function(e) {
@@ -167,6 +173,15 @@ $(function() {
   
   
   
+  /* colors */
+  
+  var getRGBColor = function(imageData) {
+    var opacity = imageData[3]/255;
+    return 'rgba(' + imageData[0] + ', ' + imageData[1] + ', ' + imageData[2] + ', ' + opacity + ')';
+  };
+  
+  
+  
   /* import/export */
   
   var saveCanvas = function() {
@@ -175,7 +190,7 @@ $(function() {
   };
   
   var exportHistory = function() {
-    console.log('export json');
+    console.log(JSON.stringify(history));
   };
   
   var importHistory = function() {
@@ -189,9 +204,9 @@ $(function() {
   $body.keypress(function(e){
     
     switch (e.which) {
-      case 114:
-        // r
-        resetCanvas();
+      case 100:
+        // d
+        deleteCanvas();
         break;
       case 97:
         // a
@@ -203,6 +218,14 @@ $(function() {
         break;
       case 101:
         // e
+        pixel.color = null;
+        break;
+      case 112:
+        // p
+        pixel.color = 'rgba(0, 0, 0, 1)';
+        break;
+      case 106:
+        // j
         exportHistory();
         break;
       case 105:
