@@ -9,7 +9,9 @@ $(function() {
 
   var ctx, 
       historyPointer = 0,
-      history = [];
+      history = [],
+      animating = 'new',
+      interval;
 
   var $window = $(window),
       $body = $('body'),
@@ -46,6 +48,7 @@ $(function() {
   var deleteCanvas = function() {
     ctx.clearRect(0, 0, $window.width(), $window.height());
     history = [];
+    animate = 'new';
     saveToLocalStorage();
   };
 
@@ -97,8 +100,10 @@ $(function() {
   };
   
   var animateDrawing = function() {
-    historyPointer = 0;
-    ctx.clearRect(0, 0, $window.width(), $window.height());
+    if ( animating === 'new' ) {
+      ctx.clearRect(0, 0, $window.width(), $window.height());
+    }
+    animating = true;
     
     var drawSlowly = function(){
       if ( !history[historyPointer] ) {
@@ -108,14 +113,19 @@ $(function() {
       drawPixel(history[historyPointer].xPos, history[historyPointer].yPos, history[historyPointer].color, history[historyPointer].size, false);
       historyPointer++;
       
-      if ( historyPointer == history.length) {
-        clearInterval(interval);
+      if ( historyPointer == history.length - 1) {
+        ctx.clearRect(0, 0, $window.width(), $window.height());
+        historyPointer = 0;
       }
     };
     
-    var interval = setInterval(drawSlowly, 60); 
+    interval = setInterval(drawSlowly, 60); 
   };
-
+  
+  var pauseAnimateDrawing = function() {
+    animating = false;
+    clearInterval(interval);
+  };
 
 
   /* drawing events */
@@ -218,7 +228,12 @@ $(function() {
         break;
       case 97:
         // a
-        animateDrawing();
+        if ( !animating || animating == 'new' ) {
+          animateDrawing();
+        }
+        else {
+          pauseAnimateDrawing();
+        }
         break;
       case 115:
         // s
@@ -242,6 +257,7 @@ $(function() {
         break;
       default:
         $modals.addClass('hidden');
+        //console.log(e.which);
         break;
     }
     
@@ -298,7 +314,7 @@ $(function() {
   generateCanvas();
   initpixel(15);
 
-  historyPointer = -1;
+  historyPointer = 0;
 
   // mouse
   $canvas.mousedown(onMouseDown).mouseup(onMouseUp);
