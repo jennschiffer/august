@@ -19,7 +19,8 @@ $(function() {
       $link = $('.link'),
       $modals = $('.modal'),
       $modalImport = $('.import'),
-      $modalAbout = $('.about');
+      $modalAbout = $('.about'),
+      $inputImport = $('#import-json');
 
   var windowCanvas = {
     height: $window.height(),
@@ -195,6 +196,8 @@ $(function() {
     $modalAbout.removeClass('hidden');
   });
   
+  
+  
   /* colors */
   
   var getRGBColor = function(imageData) {
@@ -215,14 +218,15 @@ $(function() {
     window.open('data:text/json,' + encodeURIComponent(JSON.stringify(history)), '_blank');
   };
   
-  var importHistory = function() {
-    $modals.addClass('hidden');
-    $modalImport.removeClass('hidden');
+  var importHistory = function(data) {
+    if (data) {
+      history = JSON.parse(data.target.result);
+    }
   };
   
   
   
-  /* key events */
+  /* key and form events */
   
   $body.keypress(function(e){
     
@@ -258,17 +262,32 @@ $(function() {
         break;
       case 105:
         // i
-        importHistory();
+        $modals.addClass('hidden');
+        $modalImport.removeClass('hidden');
         break;
       default:
         $modals.addClass('hidden');
         //console.log(e.which);
         break;
     }
-    
+
   });
   
-  
+  $inputImport.change(function(e){
+
+    var file = $(this).prop('files')[0];
+
+    if ( window.FileReader ) {
+      fileReader = new FileReader();
+      fileReader.readAsText(file);
+      fileReader.onload = importHistory;
+      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
+    }
+    else {
+      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
+    }
+  });
+
   
   /* local storage */
   
