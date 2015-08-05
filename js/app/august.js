@@ -8,6 +8,7 @@ $(function() {
   /* var */
 
   var ctx, 
+      currentHistoryLength = 0,
       historyPointer = 0,
       history = [],
       animating = 'new',
@@ -48,8 +49,10 @@ $(function() {
   var deleteCanvas = function() {
     ctx.clearRect(0, 0, $window.width(), $window.height());
     history = [];
-    animate = 'new';
+    historyPointer = 0;
+    animating = 'new';
     saveToLocalStorage();
+    clearInterval(interval);
   };
 
   var initpixel = function(size) {
@@ -102,6 +105,7 @@ $(function() {
   var animateDrawing = function() {
     if ( animating === 'new' ) {
       ctx.clearRect(0, 0, $window.width(), $window.height());
+      currentHistoryLength = history.length - 1;
     }
     animating = true;
     
@@ -113,9 +117,10 @@ $(function() {
       drawPixel(history[historyPointer].xPos, history[historyPointer].yPos, history[historyPointer].color, history[historyPointer].size, false);
       historyPointer++;
       
-      if ( historyPointer == history.length - 1) {
+      if ( historyPointer > currentHistoryLength ) {
         ctx.clearRect(0, 0, $window.width(), $window.height());
         historyPointer = 0;
+        currentHistoryLength = history.length - 1;
       }
     };
     
