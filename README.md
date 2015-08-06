@@ -1,4 +1,4 @@
 # august
 after july and before september
 
-"(not to be confused with the [August Smart Lock(:tm:)](http://august.com/)" - my future ex-husband @vladikoff
+[august.today](http://august.today)
