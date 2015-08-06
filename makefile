@@ -1,6 +1,12 @@
 # baby's first makefile
 
-test: 
+hint: 
 	jshint js/app/*.js
+
+run:
+	node index.js
+  
+nodemon:
+	nodemon index.js
 	
-.PHONY: test
+.PHONY: hint run nodemon

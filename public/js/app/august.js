@@ -133,6 +133,16 @@ $(function() {
     clearInterval(interval);
   };
 
+  var toggleAnimation = function() {
+    if ( !animating || animating == 'new' ) {
+      animateDrawing();
+    }
+    else {
+      pauseAnimateDrawing();
+    }
+  };
+  
+  
 
   /* drawing events */
 
@@ -221,6 +231,7 @@ $(function() {
   var importHistory = function(data) {
     if (data) {
       history = JSON.parse(data.target.result);
+      $modals.addClass('hidden');
     }
   };
   
@@ -237,12 +248,7 @@ $(function() {
         break;
       case 97:
         // a
-        if ( !animating || animating == 'new' ) {
-          animateDrawing();
-        }
-        else {
-          pauseAnimateDrawing();
-        }
+        toggleAnimation();
         break;
       case 115:
         // s
