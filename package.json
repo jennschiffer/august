@@ -1,0 +1,11 @@
+{
+  "name": "august",
+  "version": "0.0.1",
+  "repository": "http://github.com/jennschiffer/august",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "4.*"
+  }
+}
