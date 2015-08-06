@@ -2,3 +2,5 @@
 
 test: 
 	jshint js/app/*.js
+	
+.PHONY: test
