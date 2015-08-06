@@ -1,7 +1,7 @@
 # baby's first makefile
 
 hint: 
-	jshint js/app/*.js
+	jshint public/js/app/*.js
 
 run:
 	node index.js

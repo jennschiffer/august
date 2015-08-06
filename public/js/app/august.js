@@ -235,6 +235,17 @@ $(function() {
     }
   };
   
+  var getHistoryData = function(file) {
+    if ( window.FileReader ) {
+      fileReader = new FileReader();
+      fileReader.readAsText(file);
+      fileReader.onload = importHistory;
+      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
+    }
+    else {
+      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
+    }
+  };
   
   
   /* key and form events */
@@ -280,18 +291,8 @@ $(function() {
   });
   
   $inputImport.change(function(e){
-
     var file = $(this).prop('files')[0];
-
-    if ( window.FileReader ) {
-      fileReader = new FileReader();
-      fileReader.readAsText(file);
-      fileReader.onload = importHistory;
-      fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
-    }
-    else {
-      alert('Your browser doesn\'t support FileReader, which is required for uploading custom palettes.');
-    }
+    getHistoryData(file);
   });
 
   
@@ -332,6 +333,12 @@ $(function() {
     
     if ( localHistory ) {
       history = JSON.parse(localHistory);
+    }
+    else {
+      $.getJSON('/assets/welcome.json', function(data) {
+        history = data;
+        animateDrawing();
+      });
     }
     
     if ( localCanvas ) {
