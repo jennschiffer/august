@@ -13,6 +13,8 @@
     .link { position: absolute; top: 10px; left: 10px; opacity: .5; font-weight: bold; font-size: 1.5em; }
     table { text-align: left; }
     td, th { padding: 0 15px 0 0; }
+    form { margin: 10px 0; }
+    label { display: block; margin: 5px 0; }
   </style>
 </head>
 <body>
@@ -42,11 +44,11 @@
       </tr>
       <tr>
         <td>i</td>
-        <td>import json</td>
+        <td>import <a href="">pxon</a></td>
       </tr>
       <tr>
         <td>j</td>
-        <td>export json</td>
+        <td>export <a href="">pxon</a></td>
       </tr>      
       <tr>
         <td>s</td>
@@ -64,11 +66,36 @@
   </div>
   
   <div class="modal import hidden">
-    <strong>import json history</strong>
+    <strong>import pxon</strong>
     <p>
-      <input type="file" name="json" id="import-json" />
+      <input type="file" name="pxon" id="import-pxon" />
     </p>
   </div>
+  
+    
+  <div class="modal export hidden">
+    <strong>export pxon</strong>
+    <form id="exif">
+      <label for="artist">
+        artist name: <input type="text" name="artist" class="exif artist" value="" />
+      </label>
+      
+      <label for="imageDescription">
+        image description: <input type="text" name="imageDescription" class="exif imageDescription" value="" />
+      </label>
+      
+      <label for="userComment">
+        user comment: <input type="text" name="userComment" class="exif userComment" value="" />
+      </label>
+      
+      <label for="copyright">
+        copyright: <input type="text" name="copyright" class="exif copyright" value="" />
+      </label>
+      
+      <input type="submit" id="export-pxon" value="export pxon" />
+    </form>
+  </div>
+  
   <script src="js/lib/jquery.js"></script>
   <script src="js/app/august.js"></script>
 </body>

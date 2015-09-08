@@ -10,7 +10,6 @@ $(function() {
   var ctx, 
       currentHistoryLength = 0,
       historyPointer = 0,
-      history = [],
       animating = 'new',
       interval;
 
@@ -19,8 +18,10 @@ $(function() {
       $link = $('.link'),
       $modals = $('.modal'),
       $modalImport = $('.import'),
+      $modalExport = $('.export'),
       $modalAbout = $('.about'),
-      $inputImport = $('#import-json');
+      $inputImport = $('#import-pxon'),
+      $inputExport = $('#export-pxon');
 
   var windowCanvas = {
     height: $window.height(),
@@ -31,7 +32,15 @@ $(function() {
   var pixel = {
     color: 'rgba(0, 0, 0, 1)',
   };
-
+  
+  var pxon = {
+    exif: {
+      software: 'http://august.today'
+    },
+    pxif: {
+      pixels: []
+    }
+  };
 
 
   /* canvas & drawing */
@@ -49,7 +58,7 @@ $(function() {
   
   var deleteCanvas = function() {
     ctx.clearRect(0, 0, $window.width(), $window.height());
-    history = [];
+    pxon.pxif.pixels = [];
     historyPointer = 0;
     animating = 'new';
     saveToLocalStorage();
@@ -65,12 +74,12 @@ $(function() {
     // get color at this spot and compare to color
     var orig = ctx.getImageData(xPos, yPos, 1, 1).data;
 
-    if ( getRGBColor(orig) == color || !color && orig[3] === 0) {
+    if ( getRGBColor(orig) === color || !color && orig[3] === 0) {
       return;
     }
     
     if ( addToHistory ) {
-      history.push({
+      (pxon.pxif.pixels).push({
         xPos: xPos,
         yPos: yPos,
         color: color,
@@ -106,22 +115,22 @@ $(function() {
   var animateDrawing = function() {
     if ( animating === 'new' ) {
       ctx.clearRect(0, 0, $window.width(), $window.height());
-      currentHistoryLength = history.length - 1;
+      currentHistoryLength = pxon.pxif.pixels.length - 1;
     }
     animating = true;
     
     var drawSlowly = function(){
-      if ( !history[historyPointer] ) {
+      if ( !pxon.pxif.pixels[historyPointer] ) {
         return;
       }
       
-      drawPixel(history[historyPointer].xPos, history[historyPointer].yPos, history[historyPointer].color, history[historyPointer].size, false);
+      drawPixel(pxon.pxif.pixels[historyPointer].xPos, pxon.pxif.pixels[historyPointer].yPos, pxon.pxif.pixels[historyPointer].color, pxon.pxif.pixels[historyPointer].size, false);
       historyPointer++;
       
       if ( historyPointer > currentHistoryLength ) {
         ctx.clearRect(0, 0, $window.width(), $window.height());
         historyPointer = 0;
-        currentHistoryLength = history.length - 1;
+        currentHistoryLength = pxon.pxif.pixels.length - 1;
       }
     };
     
@@ -134,7 +143,7 @@ $(function() {
   };
 
   var toggleAnimation = function() {
-    if ( !animating || animating == 'new' ) {
+    if ( !animating || animating === 'new' ) {
       animateDrawing();
     }
     else {
@@ -148,6 +157,18 @@ $(function() {
 
   var onMouseDown = function(e) {
     e.preventDefault();
+    
+    var modalOpen = false;
+    $modals.each(function(){
+      if ( !$(this).hasClass('hidden') ) {
+        modalOpen = true;
+      }
+    });
+    
+    if ( modalOpen ) {
+      $modals.addClass('hidden');
+      return;
+    }
     
     if ( e.which === 3 ) {
       return;
@@ -224,22 +245,42 @@ $(function() {
     window.open(png, '_blank');
   };
   
-  var exportHistory = function() {
-    window.open('data:text/json,' + encodeURIComponent(JSON.stringify(history)), '_blank');
+  var exportPXON = function() {
+    // save form fields
+    pxon.exif.artist = $('.exif.artist').val();
+    pxon.exif.imageDescription = $('.exif.imageDescription').val();
+    pxon.exif.userComment = $('.exif.userComment').val();
+    pxon.exif.copyright = $('.exif.copyright').val();
+    
+    // other exif info
+    pxon.exif.dateTime = Date();
+    pxon.exif.dateTimeOriginal = ( exif.dateTimeOriginal ) ? exif.dateTimeOriginal : exif.dateTime;
+    
+    // pxif
+    pxon.pxif.dataURL = $canvas[0].toDataURL('image/png');
+        
+    window.open('data:text/json,' + encodeURIComponent(JSON.stringify(pxon)), '_blank');
   };
   
-  var importHistory = function(data) {
+  var importPXON = function(data) {
     if (data) {
-      history = JSON.parse(data.target.result);
+      pxon = JSON.parse(data.target.result);
+      
+      // prefill the export fields
+      $('.exif.artist').val(pxon.exif.artist);
+      $('.exif.imageDescription').val(pxon.exif.imageDescription);
+      $('.exif.userComment').val(pxon.exif.userComment);
+      $('.exif.copyright').val(pxon.exif.copyright);
+      
       $modals.addClass('hidden');
     }
   };
   
-  var getHistoryData = function(file) {
+  var getFileData = function(file) {
     if ( window.FileReader ) {
       fileReader = new FileReader();
       fileReader.readAsText(file);
-      fileReader.onload = importHistory;
+      fileReader.onload = importPXON;
       fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
     }
     else {
@@ -252,9 +293,27 @@ $(function() {
   
   $body.keypress(function(e){
     
+    if ( !$('.modal.export').hasClass('hidden') ) {
+      switch (e.which) {
+        case 0:
+          $modals.addClass('hidden');
+          break;
+      }
+      return;
+    }
+    
     switch (e.which) {
       case 100:
         // d
+        pxon = {
+          exif: {
+            software: 'http://august.today'
+          },
+          pxif: {
+            pixels: []
+          }
+        };
+        $('.exif').val('');
         deleteCanvas();
         break;
       case 97:
@@ -275,15 +334,18 @@ $(function() {
         break;
       case 106:
         // j
-        exportHistory();
+        $modals.addClass('hidden');
+        $modalExport.removeClass('hidden');
         break;
       case 105:
         // i
         $modals.addClass('hidden');
         $modalImport.removeClass('hidden');
         break;
-      default:
+      case 0:
         $modals.addClass('hidden');
+        break;
+      default:
         //console.log(e.which);
         break;
     }
@@ -292,7 +354,12 @@ $(function() {
   
   $inputImport.change(function(e){
     var file = $(this).prop('files')[0];
-    getHistoryData(file);
+    getFileData(file);
+  });
+  
+  $inputExport.click(function(e){
+    exportPXON();
+    return false;
   });
 
   
@@ -323,7 +390,7 @@ $(function() {
     if ( hasLocalStorage() ) {
       localCanvas = $canvas[0].toDataURL('image/png');
       localStorage.august = localCanvas;
-      localStorage.augustHistory = JSON.stringify(history);
+      localStorage.augustHistory = JSON.stringify(pxon);
     }
   };
   
@@ -332,11 +399,11 @@ $(function() {
     var localHistory = localStorage.augustHistory;
     
     if ( localHistory ) {
-      history = JSON.parse(localHistory);
+      pxon = JSON.parse(localHistory);
     }
     else {
       $.getJSON('/assets/welcome.json', function(data) {
-        history = data;
+        pxon = data;
         animateDrawing();
       });
     }
