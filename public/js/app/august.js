@@ -79,11 +79,12 @@ $(function() {
     }
     
     if ( addToHistory ) {
-      (pxon.pxif.pixels).push({
+      pxon.pxif.pixels.push({
         xPos: xPos,
         yPos: yPos,
         color: color,
-        size: size
+        size: size,
+        date: new Date()
       });
     }
     
@@ -253,7 +254,7 @@ $(function() {
     pxon.exif.copyright = $('.exif.copyright').val();
     
     // other exif info
-    pxon.exif.dateTime = Date();
+    pxon.exif.dateTime = new Date();
     pxon.exif.dateTimeOriginal = ( exif.dateTimeOriginal ) ? exif.dateTimeOriginal : exif.dateTime;
     
     // pxif
@@ -294,8 +295,8 @@ $(function() {
   $body.keypress(function(e){
     
     if ( !$('.modal.export').hasClass('hidden') ) {
-      switch (e.which) {
-        case 0:
+      switch (e.keyCode) {
+        case 27:
           $modals.addClass('hidden');
           break;
       }
