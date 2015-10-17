@@ -69,10 +69,10 @@ $(function() {
     pixel.size = size;
   };
 
-  var drawPixel = function(xPos, yPos, color, size, addToHistory) {    
+  var drawPixel = function(x, y, color, size, addToHistory) {    
 
     // get color at this spot and compare to color
-    var orig = ctx.getImageData(xPos, yPos, 1, 1).data;
+    var orig = ctx.getImageData(x, y, 1, 1).data;
 
     if ( getRGBColor(orig) === color || !color && orig[3] === 0) {
       return;
@@ -80,8 +80,8 @@ $(function() {
     
     if ( addToHistory ) {
       pxon.pxif.pixels.push({
-        xPos: xPos,
-        yPos: yPos,
+        x: x,
+        y: y,
         color: color,
         size: size,
         date: new Date()
@@ -89,17 +89,17 @@ $(function() {
     }
     
     ctx.beginPath();
-    xPos = ( Math.ceil(xPos/size) * size ) - size;
-    yPos = ( Math.ceil(yPos/size) * size ) - size;
-    ctx.moveTo (xPos, yPos);
+    x = ( Math.ceil(x/size) * size ) - size;
+    y = ( Math.ceil(y/size) * size ) - size;
+    ctx.moveTo (x, y);
     ctx.fillStyle = color;
     ctx.lineHeight = 0;
     
     if ( !color ) {
-      ctx.clearRect(xPos, yPos, size, size);
+      ctx.clearRect(x, y, size, size);
     }
     else {
-      ctx.fillRect(xPos, yPos, size, size);
+      ctx.fillRect(x, y, size, size);
     }
   };
 
@@ -125,7 +125,7 @@ $(function() {
         return;
       }
       
-      drawPixel(pxon.pxif.pixels[historyPointer].xPos, pxon.pxif.pixels[historyPointer].yPos, pxon.pxif.pixels[historyPointer].color, pxon.pxif.pixels[historyPointer].size, false);
+      drawPixel(pxon.pxif.pixels[historyPointer].x, pxon.pxif.pixels[historyPointer].y, pxon.pxif.pixels[historyPointer].color, pxon.pxif.pixels[historyPointer].size, false);
       historyPointer++;
       
       if ( historyPointer > currentHistoryLength ) {
@@ -255,7 +255,7 @@ $(function() {
     
     // other exif info
     pxon.exif.dateTime = new Date();
-    pxon.exif.dateTimeOriginal = ( exif.dateTimeOriginal ) ? exif.dateTimeOriginal : exif.dateTime;
+    pxon.exif.dateTimeOriginal = ( pxon.exif.dateTimeOriginal ) ? pxon.exif.dateTimeOriginal : pxon.exif.dateTime;
     
     // pxif
     pxon.pxif.dataURL = $canvas[0].toDataURL('image/png');
