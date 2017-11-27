@@ -1,11 +1,11 @@
 {
   "name": "august",
   "version": "0.0.1",
-  "repository": "http://github.com/jennschiffer/august",
+  "repository": "http://glitch.com/edit/#!/pxonloop",
   "scripts": {
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "dependencies": {
-    "express": "4.*"
+    "express": "^4.16.2"
   }
 }

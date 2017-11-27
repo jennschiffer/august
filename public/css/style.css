@@ -1,0 +1,12 @@
+body { margin: 0; padding: 0; }
+canvas { display: block; }
+a:hover { cursor: help; }
+.hidden { display: none; }
+h1 { font-size: 2em; line-height: 0; }
+.modal { position: absolute; top: 25px; left: 25px; background: white; padding: 20px; font-size: .8em; border: 5px solid blue; box-shadow: 5px 5px 0 #000; }
+.link { position: absolute; top: 10px; left: 10px; opacity: .5; font-weight: bold; font-size: 1.5em; }
+table { text-align: left; }
+td, th { padding: 0 15px 0 0; }
+form { margin: 10px 0; }
+label { display: block; margin: 5px 0; }
+textarea { display: block; margin: 2em 0 0; width: 400px; height: 300px; }
