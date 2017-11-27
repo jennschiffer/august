@@ -1,5 +1,5 @@
 /*
-* august
+* pxonloop
 * artist: jenn schiffer
 */
 
@@ -21,7 +21,8 @@ $(function() {
       $modalExport = $('.export'),
       $modalAbout = $('.about'),
       $inputImport = $('#import-pxon'),
-      $inputExport = $('#export-pxon');
+      $inputExport = $('#export-pxon'),
+      $canvas;
 
   var windowCanvas = {
     height: $window.height(),
@@ -279,7 +280,7 @@ $(function() {
   
   var getFileData = function(file) {
     if ( window.FileReader ) {
-      fileReader = new FileReader();
+      var fileReader = new FileReader();
       fileReader.readAsText(file);
       fileReader.onload = importPXON;
       fileReader.onerror = function() { alert('Unable to read file. Try again.'); };
@@ -389,7 +390,7 @@ $(function() {
   
   var saveToLocalStorage = function() {
     if ( hasLocalStorage() ) {
-      localCanvas = $canvas[0].toDataURL('image/png');
+      var localCanvas = $canvas[0].toDataURL('image/png');
       localStorage.august = localCanvas;
       localStorage.augustHistory = JSON.stringify(pxon);
     }

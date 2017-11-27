@@ -1,6 +1,5 @@
-# august
-after july and before september
+# pxonloop
 
-[august.today](http://august.today)
+it's a dev playground for me and my [pxon](http://jennmoney.biz/pxon/). it takes pxon, and returns the art. 
 
-don't submit an issue or pr, ok?
+## made by [jenn](http://jennmoney.biz) <3

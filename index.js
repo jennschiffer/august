@@ -1,4 +1,4 @@
-/*** august ***/
+/*** pxonloop ***/
 
 
 // express
@@ -15,6 +15,6 @@ app.get('/', function(req, resp) {
 
 
 // server
-var server = app.listen(5000, function() {
-  console.log('august is running');
+var server = app.listen(3000, function() {
+  console.log('pxonloop is running');
 });
