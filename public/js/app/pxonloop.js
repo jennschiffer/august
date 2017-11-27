@@ -22,6 +22,7 @@ $(function() {
       $modalAbout = $('.about'),
       $inputImport = $('#import-pxon'),
       $inputExport = $('#export-pxon'),
+      $pxonTextarea = $('textarea'),
       $canvas;
 
   var windowCanvas = {
@@ -36,7 +37,7 @@ $(function() {
   
   var pxon = {
     exif: {
-      software: 'http://august.today'
+      software: 'https://pxonloop.glitch.me'
     },
     pxif: {
       pixels: []
@@ -260,8 +261,9 @@ $(function() {
     
     // pxif
     pxon.pxif.dataURL = $canvas[0].toDataURL('image/png');
-        
-    window.open('data:text/json,' + encodeURIComponent(JSON.stringify(pxon)), '_blank');
+    
+    // add to textarea
+    $pxonTextarea.removeClass('hidden').html(JSON.stringify(pxon))
   };
   
   var importPXON = function(data) {
@@ -309,7 +311,7 @@ $(function() {
         // d
         pxon = {
           exif: {
-            software: 'http://august.today'
+            software: 'https://pxonloop.glitch.me'
           },
           pxif: {
             pixels: []
@@ -360,6 +362,7 @@ $(function() {
   });
   
   $inputExport.click(function(e){
+    $pxonTextarea.addClass('hidden');
     exportPXON();
     return false;
   });
@@ -391,14 +394,14 @@ $(function() {
   var saveToLocalStorage = function() {
     if ( hasLocalStorage() ) {
       var localCanvas = $canvas[0].toDataURL('image/png');
-      localStorage.august = localCanvas;
-      localStorage.augustHistory = JSON.stringify(pxon);
+      localStorage.pxonloop = localCanvas;
+      localStorage.pxonloopHistory = JSON.stringify(pxon);
     }
   };
   
   var drawFromLocalStorage = function() {
-    var localCanvas = localStorage.august;
-    var localHistory = localStorage.augustHistory;
+    var localCanvas = localStorage.pxonloop;
+    var localHistory = localStorage.pxonloopHistory;
     
     if ( localHistory ) {
       pxon = JSON.parse(localHistory);
