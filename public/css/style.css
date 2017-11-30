@@ -1,6 +1,5 @@
 body { margin: 0; padding: 0; }
 canvas { display: block; }
-a:hover { cursor: help; }
 .hidden { display: none; }
 h1 { font-size: 2em; line-height: 0; }
 .modal { position: absolute; top: 25px; left: 25px; background: white; padding: 20px; font-size: .8em; border: 5px solid blue; box-shadow: 5px 5px 0 #000; }

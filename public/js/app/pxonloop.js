@@ -22,8 +22,11 @@ $(function() {
       $modalAbout = $('.about'),
       $inputImport = $('#import-pxon'),
       $inputExport = $('#export-pxon'),
-      $pxonTextarea = $('textarea'),
-      $canvas;
+      $pxonExportTextarea = $('#pxonExportTextarea'),
+      $pxonImportTextarea = $('#pxonImportTextarea'),
+      $pxonImportSubmit = $('#pxonImportSubmit'),
+      $canvas,
+      pxon;
 
   var windowCanvas = {
     height: $window.height(),
@@ -33,15 +36,6 @@ $(function() {
 
   var pixel = {
     color: 'rgba(0, 0, 0, 1)',
-  };
-  
-  var pxon = {
-    exif: {
-      software: 'https://pxonloop.glitch.me'
-    },
-    pxif: {
-      pixels: []
-    }
   };
 
 
@@ -263,18 +257,18 @@ $(function() {
     pxon.pxif.dataURL = $canvas[0].toDataURL('image/png');
     
     // add to textarea
-    $pxonTextarea.removeClass('hidden').html(JSON.stringify(pxon))
+    $pxonExportTextarea.removeClass('hidden').html(JSON.stringify(pxon))
   };
   
   var importPXON = function(data) {
     if (data) {
       pxon = JSON.parse(data.target.result);
-      
+            
       // prefill the export fields
-      $('.exif.artist').val(pxon.exif.artist);
-      $('.exif.imageDescription').val(pxon.exif.imageDescription);
-      $('.exif.userComment').val(pxon.exif.userComment);
-      $('.exif.copyright').val(pxon.exif.copyright);
+      $('.exif.artist').val((pxon.exif.artist) ? pxon.exif.artist : '');
+      $('.exif.imageDescription').val((pxon.exif.imageDescription) ? pxon.exif.imageDescription : '');
+      $('.exif.userComment').val((pxon.exif.userComment) ? pxon.exif.userComment : '');
+      $('.exif.copyright').val((pxon.exif.copyright) ? pxon.exif.copyright : '');
       
       $modals.addClass('hidden');
     }
@@ -295,7 +289,7 @@ $(function() {
   
   /* key and form events */
   
-  $body.keypress(function(e){
+  $body.keyup(function(e){
     
     if ( !$('.modal.export').hasClass('hidden') ) {
       switch (e.keyCode) {
@@ -305,10 +299,10 @@ $(function() {
       }
       return;
     }
-    
+        
     switch (e.which) {
-      case 100:
-        // d
+      case 68:
+        // d - delete project
         pxon = {
           exif: {
             software: 'https://pxonloop.glitch.me'
@@ -320,37 +314,35 @@ $(function() {
         $('.exif').val('');
         deleteCanvas();
         break;
-      case 97:
-        // a
+      case 65:
+        // a - play/pause animation
         toggleAnimation();
         break;
-      case 115:
-        // s
+      case 83:
+        // s - save png
         saveCanvas();
         break;
-      case 101:
-        // e
+      case 69:
+        // e - eraser tool
         pixel.color = null;
         break;
-      case 112:
-        // p
+      case 80:
+        // p - pen tool
         pixel.color = 'rgba(0, 0, 0, 1)';
         break;
-      case 106:
-        // j
+      case 74:
+        // j - export pxon
         $modals.addClass('hidden');
         $modalExport.removeClass('hidden');
         break;
-      case 105:
-        // i
+      case 73:
+        // i - import pxon
         $modals.addClass('hidden');
         $modalImport.removeClass('hidden');
         break;
-      case 0:
+      case 27:
+        // esc
         $modals.addClass('hidden');
-        break;
-      default:
-        //console.log(e.which);
         break;
     }
 
@@ -361,8 +353,18 @@ $(function() {
     getFileData(file);
   });
   
+  $pxonImportSubmit.click(function(e){
+    var dataObject = {
+      target: {
+        result: $pxonImportTextarea.val()
+      }
+    };
+    
+    importPXON(dataObject);
+  });
+  
   $inputExport.click(function(e){
-    $pxonTextarea.addClass('hidden');
+    $pxonExportTextarea.addClass('hidden');
     exportPXON();
     return false;
   });

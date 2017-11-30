@@ -32,11 +32,11 @@
       </tr>
       <tr>
         <td>i</td>
-        <td>import <a href="http://jennmoney.biz/pxon">pxon</a></td>
+        <td>import pxon</td>
       </tr>
       <tr>
         <td>j</td>
-        <td>export <a href="http://jennmoney.biz/pxon">pxon</a></td>
+        <td>export pxon</td>
       </tr>      
       <tr>
         <td>s</td>
@@ -53,10 +53,20 @@
     </table>
   </div>
   
-  <div class="modal import hidden">
+  <div class="modal import ">
     <strong>import pxon</strong>
     <p>
       <input type="file" name="pxon" id="import-pxon" />
+    </p>
+    
+    <p>
+      <hr />
+    </p>
+    
+    <p>
+      or you can paste pxon here:<br />
+      <textarea id="pxonImportTextarea"></textarea><br />
+      <input type="button" id="pxonImportSubmit" value="submit" />
     </p>
   </div>
   
@@ -82,7 +92,7 @@
       
       <input type="submit" id="export-pxon" value="export pxon" />
       
-      <textarea class="hidden"></textarea>
+      <textarea id="pxonExportTextarea" class="hidden"></textarea>
     </form>
   </div>
   
